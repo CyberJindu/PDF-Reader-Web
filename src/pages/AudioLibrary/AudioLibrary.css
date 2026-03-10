@@ -1,0 +1,381 @@
+.audio-library {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--white);
+}
+
+.library-header {
+  text-align: center;
+  padding: 40px 0 20px;
+  background: linear-gradient(to bottom, var(--gray-light), var(--white));
+}
+
+.library-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--purple-dark);
+  margin-bottom: 10px;
+}
+
+.library-subtitle {
+  font-size: 18px;
+  color: var(--black);
+  opacity: 0.7;
+}
+
+.library-controls {
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.search-section {
+  margin-bottom: 20px;
+}
+
+.search-bar {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  opacity: 0.5;
+}
+
+.search-input {
+  width: 100%;
+  padding: 15px 20px 15px 45px;
+  border: 2px solid var(--gray-border);
+  border-radius: 30px;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--purple-dark);
+  box-shadow: 0 0 0 3px rgba(74, 29, 109, 0.1);
+}
+
+.category-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.category-btn {
+  padding: 8px 16px;
+  background-color: var(--white);
+  border: 1px solid var(--gray-border);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--black);
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.category-btn:hover {
+  border-color: var(--purple-dark);
+  color: var(--purple-dark);
+}
+
+.category-btn.active {
+  background-color: var(--purple-dark);
+  border-color: var(--purple-dark);
+  color: var(--white);
+}
+
+.library-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--gray-border);
+}
+
+.tracks-count {
+  font-size: 14px;
+  color: var(--black);
+  opacity: 0.6;
+}
+
+.sort-select {
+  padding: 8px 16px;
+  border: 1px solid var(--gray-border);
+  border-radius: 20px;
+  font-size: 14px;
+  color: var(--black);
+  cursor: pointer;
+  background-color: var(--white);
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: var(--purple-dark);
+}
+
+.tracks-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 20px 60px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+
+.track-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 20px;
+  align-items: center;
+  background-color: var(--white);
+  border: 1px solid var(--gray-border);
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.3s;
+}
+
+.track-card:hover {
+  transform: translateX(5px);
+  box-shadow: var(--shadow);
+  border-color: var(--purple-dark);
+}
+
+.track-thumbnail {
+  width: 60px;
+  height: 60px;
+  background-color: var(--gray-light);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+}
+
+.track-info {
+  flex: 1;
+}
+
+.track-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--purple-dark);
+  margin-bottom: 5px;
+}
+
+.track-summary {
+  font-size: 14px;
+  color: var(--black);
+  opacity: 0.7;
+  margin-bottom: 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.track-meta {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+
+.track-category {
+  background-color: var(--gray-light);
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: var(--purple-dark);
+  font-weight: 500;
+}
+
+.track-duration {
+  color: var(--black);
+  opacity: 0.6;
+}
+
+.track-plays {
+  color: var(--black);
+  opacity: 0.6;
+}
+
+.track-date {
+  color: var(--black);
+  opacity: 0.4;
+}
+
+.track-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.action-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--gray-light);
+  color: var(--black);
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn:hover {
+  transform: scale(1.1);
+}
+
+.play-btn:hover {
+  background-color: var(--purple-dark);
+  color: var(--white);
+}
+
+.download-btn:hover {
+  background-color: #28a745;
+  color: var(--white);
+}
+
+.delete-btn:hover {
+  background-color: #dc3545;
+  color: var(--white);
+}
+
+/* No Tracks State */
+.no-tracks {
+  max-width: 400px;
+  margin: 60px auto;
+  text-align: center;
+  padding: 40px;
+  background-color: var(--gray-light);
+  border-radius: 20px;
+}
+
+.no-tracks-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.no-tracks-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--purple-dark);
+  margin-bottom: 10px;
+}
+
+.no-tracks-text {
+  color: var(--black);
+  opacity: 0.6;
+  margin-bottom: 25px;
+}
+
+.upload-first-btn {
+  background-color: var(--purple-dark);
+  color: var(--white);
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.upload-first-btn:hover {
+  background-color: var(--purple-light);
+}
+
+/* Audio Player Fixed */
+.audio-player-fixed {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 600px;
+  z-index: 1000;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translate(-50%, 100%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .library-title {
+    font-size: 28px;
+  }
+  
+  .library-subtitle {
+    font-size: 16px;
+  }
+  
+  .track-card {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 15px;
+  }
+  
+  .track-thumbnail {
+    margin: 0 auto;
+  }
+  
+  .track-meta {
+    justify-content: center;
+  }
+  
+  .track-actions {
+    justify-content: center;
+  }
+  
+  .audio-player-fixed {
+    bottom: 15px;
+    width: 95%;
+  }
+  
+  .category-filters {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+  
+  .category-btn {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .library-stats {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .track-meta {
+    gap: 10px;
+  }
+  
+  .no-tracks {
+    margin: 40px 20px;
+    padding: 30px;
+  }
+}

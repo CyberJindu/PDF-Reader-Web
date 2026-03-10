@@ -1,0 +1,131 @@
+.navbar {
+  background-color: var(--white);
+  border-bottom: 2px solid var(--purple-dark);
+  padding: 15px 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: var(--shadow);
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-img {
+  width: 40px;
+  height: 40px;
+}
+
+.logo-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--purple-dark);
+}
+
+/* Desktop Navigation */
+.desktop-nav {
+  display: flex;
+  list-style: none;
+  gap: 30px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-link {
+  font-weight: 500;
+  padding: 8px 0;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.3s;
+  color: var(--black);
+}
+
+.nav-link:hover {
+  border-bottom-color: var(--purple-dark);
+  color: var(--purple-dark);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-email {
+  font-size: 14px;
+  color: var(--black);
+  opacity: 0.7;
+}
+
+.btn-logout {
+  background-color: transparent;
+  color: var(--purple-dark);
+  border: 1px solid var(--purple-dark);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.btn-logout:hover {
+  background-color: var(--purple-dark);
+  color: var(--white);
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.btn-login {
+  font-weight: 500;
+  padding: 8px 16px;
+  color: var(--purple-dark);
+}
+
+.btn-login:hover {
+  text-decoration: underline;
+}
+
+.btn-signup {
+  background-color: var(--purple-dark);
+  color: var(--white);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.btn-signup:hover {
+  background-color: var(--purple-light);
+}
+
+/* Mobile styles - Hide desktop nav, show bottom nav */
+@media (max-width: 768px) {
+  .desktop-nav {
+    display: none;
+  }
+  
+  .user-menu {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .logo-text {
+    font-size: 20px;
+  }
+}

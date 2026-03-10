@@ -1,0 +1,35 @@
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--white);
+}
+
+.main-content {
+  flex: 1;
+  padding: 40px 0;
+}
+
+.footer {
+  background-color: var(--black);
+  color: var(--white);
+  padding: 20px 0;
+  text-align: center;
+  font-size: 14px;
+  border-top: 2px solid var(--purple-dark);
+}
+
+.footer p {
+  opacity: 0.8;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 20px 0 80px; /* Add bottom padding for bottom nav */
+  }
+  
+  .footer {
+    display: none; /* Hide footer on mobile, show bottom nav instead */
+  }
+}

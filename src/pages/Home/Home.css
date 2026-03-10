@@ -1,0 +1,25 @@
+.home {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: calc(100vh - 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-wrapper {
+  width: 100%;
+}
+
+.progress-wrapper {
+  margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+  .home {
+    padding: 10px;
+    min-height: calc(100vh - 150px);
+  }
+}
