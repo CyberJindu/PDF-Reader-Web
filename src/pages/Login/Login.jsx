@@ -150,11 +150,7 @@ const Login = () => {
           </p>
         </div>
 
-        <div className="demo-credentials">
-          <p className="demo-text">Demo Credentials:</p>
-          <p className="demo-cred">Email: student@example.com</p>
-          <p className="demo-cred">Password: password123</p>
-        </div>
+        {/* REMOVED: Demo credentials section */}
       </div>
     </div>
   )
