@@ -5,6 +5,10 @@
   padding: 20px;
   transition: transform 0.2s, box-shadow 0.2s;
   height: fit-content;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden; /* Prevent content overflow */
+  box-sizing: border-box; /* Ensure padding is included in width */
 }
 
 .note-card:hover {
@@ -17,10 +21,13 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 15px;
+  width: 100%;
 }
 
 .note-title-section {
   flex: 1;
+  min-width: 0; /* Allow text to shrink */
+  padding-right: 10px;
 }
 
 .note-title {
@@ -28,12 +35,16 @@
   font-weight: 600;
   color: var(--purple-dark);
   margin-bottom: 5px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .note-date {
   font-size: 12px;
   color: var(--black);
   opacity: 0.5;
+  white-space: nowrap;
 }
 
 .delete-note {
@@ -44,6 +55,7 @@
   opacity: 0.4;
   transition: opacity 0.3s;
   padding: 5px;
+  flex-shrink: 0;
 }
 
 .delete-note:hover {
@@ -52,12 +64,15 @@
 
 .note-content {
   margin-bottom: 15px;
+  width: 100%;
 }
 
 .note-summary {
   color: var(--black);
   line-height: 1.6;
   font-size: 14px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .read-more {
@@ -69,6 +84,7 @@
   margin-top: 8px;
   cursor: pointer;
   padding: 0;
+  display: inline-block;
 }
 
 .read-more:hover {
@@ -83,11 +99,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .audio-info {
   font-size: 13px;
   color: var(--black);
+  flex-shrink: 0;
 }
 
 .audio-duration {
@@ -95,6 +114,7 @@
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 12px;
+  white-space: nowrap;
 }
 
 .play-audio {
@@ -110,10 +130,17 @@
   display: flex;
   align-items: center;
   gap: 5px;
+  flex-shrink: 0;
 }
 
 .play-audio:hover {
   background-color: var(--purple-light);
+}
+
+.play-audio svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
 .note-footer {
@@ -122,12 +149,14 @@
   align-items: center;
   border-top: 1px solid var(--gray-border);
   padding-top: 15px;
+  width: 100%;
 }
 
 .note-tags {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  flex: 1;
 }
 
 .tag {
@@ -137,6 +166,7 @@
   background-color: var(--gray-light);
   padding: 4px 8px;
   border-radius: 4px;
+  white-space: nowrap;
 }
 
 .download-pdf {
@@ -152,6 +182,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
+  flex-shrink: 0;
 }
 
 .download-pdf:hover {
@@ -159,25 +190,10 @@
   color: var(--white);
 }
 
-@media (max-width: 768px) {
-  .note-card {
-    padding: 15px;
-  }
-  
-  .note-title {
-    font-size: 16px;
-  }
-  
-  .note-audio-section {
-    flex-direction: column;
-    gap: 10px;
-    align-items: flex-start;
-  }
-  
-  .play-audio {
-    width: 100%;
-    justify-content: center;
-  }
+.download-pdf svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
 }
 
 /* Markdown Styles */
@@ -185,6 +201,8 @@
   font-size: 0.95rem;
   line-height: 1.6;
   color: var(--text-primary);
+  width: 100%;
+  overflow-x: auto; /* Allow horizontal scroll only for code blocks */
 }
 
 .markdown-h1 {
@@ -192,6 +210,7 @@
   font-weight: 600;
   margin: 1rem 0 0.5rem;
   color: var(--purple-dark);
+  word-wrap: break-word;
 }
 
 .markdown-h2 {
@@ -199,6 +218,7 @@
   font-weight: 600;
   margin: 0.875rem 0 0.5rem;
   color: var(--purple-dark);
+  word-wrap: break-word;
 }
 
 .markdown-h3 {
@@ -206,6 +226,7 @@
   font-weight: 600;
   margin: 0.75rem 0 0.375rem;
   color: var(--purple-dark);
+  word-wrap: break-word;
 }
 
 .markdown-h4 {
@@ -213,6 +234,7 @@
   font-weight: 600;
   margin: 0.625rem 0 0.25rem;
   color: var(--purple-dark);
+  word-wrap: break-word;
 }
 
 .markdown-strong {
@@ -227,15 +249,18 @@
 
 .markdown-paragraph {
   margin: 0.5rem 0;
+  word-wrap: break-word;
 }
 
 .markdown-list {
   margin: 0.5rem 0 0.5rem 1.5rem;
   list-style-type: disc;
+  word-wrap: break-word;
 }
 
 .markdown-list-item {
   margin: 0.25rem 0;
+  word-wrap: break-word;
 }
 
 .markdown-hr {
@@ -243,6 +268,7 @@
   border: 0;
   height: 1px;
   background: linear-gradient(to right, transparent, var(--purple-light), transparent);
+  width: 100%;
 }
 
 .markdown-code-inline {
@@ -252,6 +278,11 @@
   font-family: monospace;
   font-size: 0.9em;
   color: var(--purple-dark);
+  white-space: nowrap;
+  max-width: 100%;
+  overflow-x: auto;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .markdown-code-block {
@@ -263,9 +294,10 @@
   font-size: 0.9em;
   overflow-x: auto;
   margin: 0.5rem 0;
-
+  max-width: 100%;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
-
 
 /* Tablet Styles */
 @media (min-width: 769px) and (max-width: 1024px) {
@@ -283,6 +315,8 @@
   .note-card {
     padding: 16px;
     border-radius: 10px;
+    margin: 0;
+    width: 100%;
   }
   
   .note-header {
@@ -319,7 +353,7 @@
   
   .note-audio-section {
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-start;
     gap: 12px;
     padding: 12px;
     margin-bottom: 12px;
@@ -354,6 +388,7 @@
     padding-top: 12px;
     flex-direction: column;
     gap: 12px;
+    align-items: flex-start;
   }
   
   .note-tags {
@@ -364,6 +399,7 @@
   .tag {
     font-size: 11px;
     padding: 3px 6px;
+    white-space: nowrap;
   }
   
   .download-pdf {
@@ -405,6 +441,11 @@
   .markdown-code-block {
     padding: 0.6rem;
     font-size: 0.85em;
+  }
+  
+  .markdown-code-inline {
+    white-space: normal;
+    word-break: break-all;
   }
 }
 
