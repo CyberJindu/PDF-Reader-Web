@@ -4,6 +4,12 @@
   box-sizing: border-box;
 }
 
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+  position: relative;
+}
+
 :root {
   --purple-dark: #4A1D6D;
   --purple-light: #6B3A9A;
@@ -12,6 +18,10 @@
   --gray-light: #F5F5F5;
   --gray-border: #E0E0E0;
   --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --success-color: #28a745;
+  --text-primary: #1A1A1A;
+  --text-secondary: #666666;
+  --bg-secondary: #F8F9FA;
 }
 
 body {
@@ -19,6 +29,10 @@ body {
   color: var(--black);
   background-color: var(--white);
   line-height: 1.6;
+  width: 100%;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 button {
@@ -37,6 +51,7 @@ a {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+  width: 100%;
 }
 
 /* Utility classes */
@@ -56,6 +71,9 @@ a {
   border-radius: 8px;
   font-weight: 600;
   transition: background-color 0.3s;
+  display: inline-block;
+  text-align: center;
+  max-width: 100%;
 }
 
 .btn-primary:hover {
@@ -70,9 +88,100 @@ a {
   border-radius: 8px;
   font-weight: 600;
   transition: all 0.3s;
+  display: inline-block;
+  text-align: center;
+  max-width: 100%;
 }
 
 .btn-secondary:hover {
   background-color: var(--purple-dark);
   color: var(--white);
+}
+
+/* Image and media responsiveness */
+img, svg, video, canvas, audio, iframe, embed, object {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Form element responsiveness */
+input, textarea, select, button {
+  max-width: 100%;
+}
+
+/* Typography responsiveness */
+h1 {
+  font-size: clamp(24px, 5vw, 36px);
+  word-wrap: break-word;
+}
+
+h2 {
+  font-size: clamp(20px, 4vw, 30px);
+  word-wrap: break-word;
+}
+
+h3 {
+  font-size: clamp(18px, 3vw, 24px);
+  word-wrap: break-word;
+}
+
+p {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Responsive container breakpoints */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 12px;
+  }
+  
+  .btn-primary, .btn-secondary {
+    padding: 10px 20px;
+    font-size: 14px;
+    width: 100%;
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus styles for accessibility */
+:focus {
+  outline: 2px solid var(--purple-light);
+  outline-offset: 2px;
+}
+
+/* Selection styles */
+::selection {
+  background-color: var(--purple-light);
+  color: var(--white);
+}
+
+/* Scrollbar styling (optional) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gray-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--purple-light);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--purple-dark);
 }
