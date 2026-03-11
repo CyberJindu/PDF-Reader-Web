@@ -626,3 +626,40 @@
     bottom: 10px;
   }
 }
+
+@media (max-width: 768px) {
+  .audio-library {
+    overflow-x: hidden;
+    width: 100%;
+  }
+  
+  .tracks-grid {
+    padding: 15px;
+    gap: 12px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  .track-card {
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+  }
+  
+  .library-controls {
+    width: 100%;
+    padding: 0 15px;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 480px) {
+  .tracks-grid {
+    padding: 12px;
+    gap: 10px;
+  }
+  
+  .track-card {
+    padding: 15px;
+  }
+}
