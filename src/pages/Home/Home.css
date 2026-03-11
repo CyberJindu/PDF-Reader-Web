@@ -17,9 +17,29 @@
   margin-top: 30px;
 }
 
+/* Tablet Styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .home {
+    max-width: 700px;
+    padding: 15px;
+  }
+}
+
+/* Mobile Styles */
 @media (max-width: 768px) {
   .home {
     padding: 10px;
     min-height: calc(100vh - 150px);
+  }
+  
+  .progress-wrapper {
+    margin-top: 20px;
+  }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 480px) {
+  .home {
+    padding: 5px;
   }
 }
