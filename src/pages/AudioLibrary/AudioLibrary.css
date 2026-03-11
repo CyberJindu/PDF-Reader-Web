@@ -378,4 +378,251 @@
     margin: 40px 20px;
     padding: 30px;
   }
+
+}
+
+
+/* Tablet Styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .tracks-grid {
+    padding: 20px;
+  }
+  
+  .track-card {
+    padding: 18px;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .library-header {
+    padding: 30px 20px 15px;
+  }
+  
+  .library-title {
+    font-size: 28px;
+  }
+  
+  .library-subtitle {
+    font-size: 16px;
+    padding: 0 15px;
+  }
+  
+  .library-controls {
+    margin: 20px auto;
+    padding: 0 15px;
+  }
+  
+  .search-input {
+    padding: 14px 15px 14px 40px;
+    font-size: 15px;
+  }
+  
+  .category-filters {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    margin-bottom: 5px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Hide scrollbar Firefox */
+  }
+  
+  .category-filters::-webkit-scrollbar {
+    display: none; /* Hide scrollbar Chrome/Safari */
+  }
+  
+  .category-btn {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+  
+  .library-stats {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 15px 0;
+    padding: 15px 0;
+  }
+  
+  .tracks-count {
+    font-size: 13px;
+  }
+  
+  .sort-select {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+  }
+  
+  .tracks-grid {
+    padding: 15px;
+    gap: 12px;
+  }
+  
+  .track-card {
+    grid-template-columns: 1fr;
+    text-align: left;
+    gap: 15px;
+    padding: 18px;
+  }
+  
+  .track-thumbnail {
+    width: 50px;
+    height: 50px;
+    margin: 0;
+    font-size: 24px;
+  }
+  
+  .track-title {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+  
+  .track-summary {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  
+  .track-meta {
+    justify-content: flex-start;
+    gap: 12px;
+    font-size: 11px;
+  }
+  
+  .track-actions {
+    justify-content: flex-start;
+    gap: 12px;
+  }
+  
+  .action-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+  
+  .audio-player-fixed {
+    bottom: 80px; /* Above bottom navigation */
+    width: 95%;
+  }
+  
+  .no-tracks {
+    margin: 40px 20px;
+    padding: 30px 20px;
+  }
+  
+  .no-tracks-title {
+    font-size: 22px;
+  }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 480px) {
+  .library-header {
+    padding: 25px 15px 10px;
+  }
+  
+  .library-title {
+    font-size: 24px;
+  }
+  
+  .library-subtitle {
+    font-size: 14px;
+  }
+  
+  .library-controls {
+    margin: 15px auto;
+    padding: 0 12px;
+  }
+  
+  .search-input {
+    padding: 12px 12px 12px 36px;
+    font-size: 14px;
+  }
+  
+  .category-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  
+  .tracks-grid {
+    padding: 12px;
+    gap: 10px;
+  }
+  
+  .track-card {
+    padding: 15px;
+  }
+  
+  .track-thumbnail {
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+  }
+  
+  .track-title {
+    font-size: 15px;
+  }
+  
+  .track-summary {
+    font-size: 12px;
+    -webkit-line-clamp: 2;
+  }
+  
+  .track-meta {
+    gap: 10px;
+    font-size: 10px;
+  }
+  
+  .track-actions {
+    gap: 10px;
+  }
+  
+  .action-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .no-tracks {
+    margin: 30px 15px;
+    padding: 25px 15px;
+  }
+  
+  .no-tracks-title {
+    font-size: 20px;
+  }
+  
+  .no-tracks-text {
+    font-size: 14px;
+  }
+  
+  .upload-first-btn {
+    padding: 10px 25px;
+    font-size: 15px;
+  }
+}
+
+/* Landscape Mode on Mobile */
+@media (max-width: 850px) and (orientation: landscape) {
+  .track-card {
+    grid-template-columns: auto 1fr auto;
+    text-align: left;
+  }
+  
+  .track-thumbnail {
+    margin: 0;
+  }
+  
+  .track-meta {
+    justify-content: flex-start;
+  }
+  
+  .track-actions {
+    justify-content: flex-start;
+  }
+  
+  .audio-player-fixed {
+    bottom: 10px;
+  }
 }
