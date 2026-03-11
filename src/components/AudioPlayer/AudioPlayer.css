@@ -212,4 +212,169 @@
     order: 2;
     margin-left: auto;
   }
+
+}
+
+
+
+/* Tablet Styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .audio-player {
+    max-width: 550px;
+    padding: 18px;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .audio-player {
+    padding: 16px;
+    border-radius: 10px;
+  }
+  
+  .audio-player-header {
+    margin-bottom: 15px;
+  }
+  
+  .audio-player-title {
+    font-size: 15px;
+    max-width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .close-player {
+    font-size: 16px;
+    padding: 4px;
+  }
+  
+  .player-controls {
+    gap: 12px;
+  }
+  
+  .play-pause-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+  
+  .play-pause-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .progress-container {
+    min-width: 150px;
+    gap: 8px;
+  }
+  
+  .time-current,
+  .time-total {
+    font-size: 11px;
+    min-width: 35px;
+  }
+  
+  .progress-bar {
+    height: 5px;
+  }
+  
+  .volume-control {
+    display: none; /* Hide volume on mobile */
+  }
+  
+  .download-btn {
+    font-size: 16px;
+    padding: 4px;
+  }
+  
+  .download-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 480px) {
+  .audio-player {
+    padding: 14px;
+    border-radius: 8px;
+  }
+  
+  .audio-player-header {
+    margin-bottom: 12px;
+  }
+  
+  .audio-player-title {
+    font-size: 14px;
+  }
+  
+  .close-player {
+    font-size: 14px;
+  }
+  
+  .player-controls {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .play-pause-btn {
+    order: 1;
+    width: 36px;
+    height: 36px;
+  }
+  
+  .play-pause-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .progress-container {
+    order: 3;
+    width: 100%;
+    min-width: auto;
+  }
+  
+  .time-current,
+  .time-total {
+    font-size: 10px;
+    min-width: 30px;
+  }
+  
+  .download-btn {
+    order: 2;
+    margin-left: auto;
+  }
+  
+  .download-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Very Small Devices */
+@media (max-width: 360px) {
+  .audio-player {
+    padding: 12px;
+  }
+  
+  .audio-player-title {
+    font-size: 13px;
+  }
+  
+  .play-pause-btn {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .play-pause-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .time-current,
+  .time-total {
+    font-size: 9px;
+    min-width: 28px;
+  }
 }
