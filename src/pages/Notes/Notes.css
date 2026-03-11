@@ -236,8 +236,6 @@
 
 }
 
-/* Add to existing Notes.css */
-
 /* Tablet Styles */
 @media (min-width: 769px) and (max-width: 1024px) {
   .notes-grid {
@@ -384,3 +382,4 @@
     bottom: 10px;
   }
 }
+
