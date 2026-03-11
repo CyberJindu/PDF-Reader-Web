@@ -222,4 +222,216 @@
     transform: scale(1);
     opacity: 1;
   }
+
+}
+
+
+
+/* Tablet Styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .upload-area {
+    max-width: 550px;
+    padding: 30px 15px;
+  }
+  
+  .upload-title {
+    font-size: 30px;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .upload-area {
+    padding: 20px 15px;
+  }
+  
+  .upload-title {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+  
+  .upload-subtitle {
+    font-size: 15px;
+    margin-bottom: 25px;
+  }
+  
+  .drop-zone {
+    padding: 30px 20px;
+  }
+  
+  .drop-zone-content svg {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .drop-text {
+    font-size: 16px;
+  }
+  
+  .file-info {
+    font-size: 13px;
+  }
+  
+  .file-preview {
+    gap: 12px;
+  }
+  
+  .file-preview svg {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .file-name {
+    font-size: 14px;
+  }
+  
+  .file-size {
+    font-size: 12px;
+  }
+  
+  .remove-file {
+    font-size: 18px;
+    padding: 4px;
+  }
+  
+  .error-message {
+    font-size: 13px;
+    margin-top: 12px;
+  }
+  
+  .upload-button {
+    padding: 12px 25px;
+    font-size: 16px;
+    margin-top: 25px;
+    max-width: 250px;
+  }
+  
+  .progress-status {
+    font-size: 14px;
+  }
+  
+  .progress-hint {
+    font-size: 12px;
+  }
+  
+  .redirect-hint {
+    font-size: 12px;
+  }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 480px) {
+  .upload-area {
+    padding: 15px 10px;
+  }
+  
+  .upload-title {
+    font-size: 24px;
+  }
+  
+  .upload-subtitle {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  
+  .drop-zone {
+    padding: 25px 15px;
+  }
+  
+  .drop-zone-content svg {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .drop-text {
+    font-size: 15px;
+  }
+  
+  .file-info {
+    font-size: 12px;
+  }
+  
+  .file-preview {
+    gap: 10px;
+  }
+  
+  .file-preview svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .file-name {
+    font-size: 13px;
+  }
+  
+  .file-size {
+    font-size: 11px;
+  }
+  
+  .remove-file {
+    font-size: 16px;
+  }
+  
+  .upload-button {
+    padding: 10px 20px;
+    font-size: 15px;
+    margin-top: 20px;
+    max-width: 220px;
+  }
+  
+  .progress-bar {
+    height: 6px;
+  }
+  
+  .progress-status {
+    font-size: 13px;
+  }
+  
+  .progress-status-container {
+    gap: 6px;
+  }
+  
+  .done-icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .progress-status.success {
+    font-size: 14px;
+  }
+  
+  .redirect-hint {
+    font-size: 11px;
+    margin-top: 6px;
+  }
+}
+
+/* Very Small Devices */
+@media (max-width: 360px) {
+  .upload-title {
+    font-size: 22px;
+  }
+  
+  .drop-zone {
+    padding: 20px 10px;
+  }
+  
+  .drop-text {
+    font-size: 14px;
+  }
+  
+  .file-preview {
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .file-details {
+    text-align: center;
+    width: 100%;
+  }
+  
+  .upload-button {
+    max-width: 100%;
+  }
 }
