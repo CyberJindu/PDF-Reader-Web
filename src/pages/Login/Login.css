@@ -217,4 +217,171 @@
     gap: 15px;
     align-items: flex-start;
   }
+
+}
+
+
+
+/* Tablet Styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .login-card {
+    max-width: 400px;
+    padding: 35px;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .login-container {
+    padding: 15px;
+  }
+  
+  .login-card {
+    padding: 30px 25px;
+    border-radius: 20px;
+  }
+  
+  .login-logo {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 15px;
+  }
+  
+  .login-title {
+    font-size: 26px;
+    margin-bottom: 8px;
+  }
+  
+  .login-subtitle {
+    font-size: 15px;
+  }
+  
+  .form-group {
+    margin-bottom: 18px;
+  }
+  
+  .form-label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  
+  .form-input {
+    padding: 11px 14px;
+    font-size: 15px;
+  }
+  
+  .form-options {
+    margin-bottom: 22px;
+  }
+  
+  .checkbox-label {
+    font-size: 13px;
+  }
+  
+  .forgot-link {
+    font-size: 13px;
+  }
+  
+  .login-button {
+    padding: 12px;
+    font-size: 15px;
+  }
+  
+  .login-footer {
+    padding-top: 25px;
+  }
+  
+  .signup-prompt {
+    font-size: 14px;
+  }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 10px;
+  }
+  
+  .login-card {
+    padding: 25px 20px;
+    border-radius: 16px;
+  }
+  
+  .login-logo {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 12px;
+  }
+  
+  .login-title {
+    font-size: 24px;
+    margin-bottom: 5px;
+  }
+  
+  .login-subtitle {
+    font-size: 14px;
+  }
+  
+  .form-group {
+    margin-bottom: 16px;
+  }
+  
+  .form-label {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+  
+  .form-input {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  
+  .form-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .checkbox-label {
+    font-size: 12px;
+  }
+  
+  .forgot-link {
+    font-size: 12px;
+    margin-left: 0;
+  }
+  
+  .login-button {
+    padding: 11px;
+    font-size: 14px;
+  }
+  
+  .login-footer {
+    padding-top: 20px;
+  }
+  
+  .signup-prompt {
+    font-size: 13px;
+  }
+}
+
+/* Very Small Devices */
+@media (max-width: 360px) {
+  .login-card {
+    padding: 20px 15px;
+  }
+  
+  .login-title {
+    font-size: 22px;
+  }
+  
+  .login-subtitle {
+    font-size: 13px;
+  }
+  
+  .form-input {
+    padding: 9px 10px;
+    font-size: 13px;
+  }
 }
