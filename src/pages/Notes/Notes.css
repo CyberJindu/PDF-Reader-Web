@@ -233,4 +233,154 @@
     margin: 40px 20px;
     padding: 30px;
   }
+
+}
+
+/* Add to existing Notes.css */
+
+/* Tablet Styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .notes-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .notes-controls {
+    padding: 0 15px;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .notes-header {
+    padding: 30px 20px 15px;
+  }
+  
+  .notes-title {
+    font-size: 28px;
+  }
+  
+  .notes-subtitle {
+    font-size: 16px;
+    padding: 0 15px;
+  }
+  
+  .notes-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+    margin: 20px auto;
+    padding: 0 15px;
+  }
+  
+  .search-bar {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .search-input {
+    padding: 12px 15px 12px 40px;
+    font-size: 15px;
+  }
+  
+  .filter-buttons {
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .filter-btn {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+  }
+  
+  .notes-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 15px;
+  }
+  
+  .notes-stats {
+    margin: 15px auto;
+    padding: 0 15px;
+  }
+  
+  .audio-player-fixed {
+    bottom: 80px; /* Above bottom navigation */
+    width: 95%;
+    max-width: none;
+  }
+  
+  .no-notes {
+    margin: 40px 20px;
+    padding: 30px 20px;
+  }
+  
+  .no-notes-title {
+    font-size: 22px;
+  }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 480px) {
+  .notes-header {
+    padding: 25px 15px 10px;
+  }
+  
+  .notes-title {
+    font-size: 24px;
+  }
+  
+  .notes-subtitle {
+    font-size: 14px;
+  }
+  
+  .filter-buttons {
+    gap: 8px;
+  }
+  
+  .filter-btn {
+    padding: 8px;
+    font-size: 13px;
+  }
+  
+  .notes-grid {
+    gap: 12px;
+    padding: 10px;
+  }
+  
+  .stats-count {
+    font-size: 13px;
+  }
+  
+  .no-notes {
+    margin: 30px 15px;
+    padding: 25px 15px;
+  }
+  
+  .no-notes-title {
+    font-size: 20px;
+  }
+  
+  .no-notes-text {
+    font-size: 14px;
+  }
+  
+  .upload-first-btn {
+    padding: 10px 25px;
+    font-size: 15px;
+  }
+}
+
+/* Landscape Mode on Mobile */
+@media (max-width: 850px) and (orientation: landscape) {
+  .notes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .audio-player-fixed {
+    bottom: 10px;
+  }
 }
