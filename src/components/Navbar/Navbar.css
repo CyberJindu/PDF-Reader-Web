@@ -12,6 +12,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .logo {
@@ -46,6 +49,7 @@
   border-bottom: 2px solid transparent;
   transition: border-color 0.3s;
   color: var(--black);
+  font-size: 16px;
 }
 
 .nav-link:hover {
@@ -68,6 +72,10 @@
   font-size: 14px;
   color: var(--black);
   opacity: 0.7;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .btn-logout {
@@ -79,6 +87,7 @@
   font-size: 14px;
   font-weight: 500;
   transition: all 0.3s;
+  cursor: pointer;
 }
 
 .btn-logout:hover {
@@ -95,6 +104,7 @@
   font-weight: 500;
   padding: 8px 16px;
   color: var(--purple-dark);
+  font-size: 14px;
 }
 
 .btn-login:hover {
@@ -108,24 +118,86 @@
   border-radius: 6px;
   font-weight: 500;
   transition: background-color 0.3s;
+  font-size: 14px;
 }
 
 .btn-signup:hover {
   background-color: var(--purple-light);
 }
 
-/* Mobile styles - Hide desktop nav, show bottom nav */
+/* Mobile Menu Button */
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.mobile-menu-btn svg {
+  width: 24px;
+  height: 24px;
+  stroke: var(--purple-dark);
+}
+
+/* Mobile Styles */
 @media (max-width: 768px) {
+  .navbar {
+    padding: 10px 0;
+  }
+  
+  .logo-text {
+    font-size: 20px;
+  }
+  
+  .logo-img {
+    width: 32px;
+    height: 32px;
+  }
+  
   .desktop-nav {
     display: none;
   }
   
   .user-menu {
-    flex-direction: column;
     gap: 10px;
   }
   
+  .user-email {
+    display: none; /* Hide email on mobile, show in bottom nav instead */
+  }
+  
+  .btn-logout {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  
+  .mobile-menu-btn {
+    display: block;
+  }
+  
+  .auth-buttons {
+    display: none; /* Hide auth buttons on mobile, show in bottom nav */
+  }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 480px) {
+  .navbar-container {
+    padding: 0 15px;
+  }
+  
   .logo-text {
-    font-size: 20px;
+    font-size: 18px;
+  }
+  
+  .logo-img {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .btn-logout {
+    padding: 5px 10px;
+    font-size: 12px;
   }
 }
