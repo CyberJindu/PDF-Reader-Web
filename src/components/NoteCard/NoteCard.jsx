@@ -1,9 +1,12 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import ReactMarkdown from 'react-markdown'
+import html2pdf from 'html2pdf.js'
 import './NoteCard.css'
 
 const NoteCard = ({ note, onPlayAudio, onDelete }) => {
   const [expanded, setExpanded] = useState(false)
+  const [isDownloading, setIsDownloading] = useState(false)
+  const summaryRef = useRef(null)
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' }
@@ -13,6 +16,56 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
   const truncateSummary = (text, maxLength = 300) => {
     if (text.length <= maxLength) return text
     return text.substr(0, maxLength) + '...'
+  }
+
+  const handleDownloadPDF = async () => {
+    if (!summaryRef.current) return
+    
+    setIsDownloading(true)
+    
+    try {
+      // Create a clean container for PDF export
+      const element = document.createElement('div')
+      element.className = 'pdf-export'
+      element.innerHTML = `
+        <div style="padding: 20px; font-family: 'Inter', sans-serif;">
+          <h1 style="color: #4A1D6D; font-size: 24px; margin-bottom: 10px;">${note.title || 'Summary'}</h1>
+          <div style="color: #666; font-size: 14px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #e0e0e0;">
+            Created: ${formatDate(note.createdAt)} • ${note.pages || '?'} pages
+          </div>
+          <div style="line-height: 1.6; color: #333;">
+            ${summaryRef.current.innerHTML}
+          </div>
+        </div>
+      `
+      
+      // PDF options
+      const opt = {
+        margin: [0.5, 0.5, 0.5, 0.5],
+        filename: `${note.title || 'summary'}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+          scale: 2,
+          letterRendering: true,
+          useCORS: true,
+          logging: false
+        },
+        jsPDF: { 
+          unit: 'in', 
+          format: 'a4', 
+          orientation: 'portrait'
+        }
+      }
+      
+      // Generate and download PDF
+      await html2pdf().set(opt).from(element).save()
+      
+    } catch (error) {
+      console.error('PDF download failed:', error)
+      alert('Failed to download PDF. Please try again.')
+    } finally {
+      setIsDownloading(false)
+    }
   }
 
   // Custom components for markdown rendering
@@ -66,7 +119,10 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
       </div>
 
       <div className="note-content">
-        <div className="note-summary markdown-body">
+        <div 
+          ref={summaryRef}
+          className="note-summary markdown-body"
+        >
           {expanded ? (
             <ReactMarkdown components={MarkdownComponents}>
               {note.summary}
@@ -119,6 +175,34 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
             <span key={tag} className="tag">#{tag}</span>
           ))}
         </div>
+        
+        {/* New Download PDF Button */}
+        <button 
+          onClick={handleDownloadPDF}
+          className={`download-pdf-btn ${isDownloading ? 'downloading' : ''}`}
+          disabled={isDownloading}
+          title="Download as PDF"
+        >
+          {isDownloading ? (
+            <>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="spinner">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" strokeDasharray="32" strokeDashoffset="32">
+                  <animate attributeName="stroke-dashoffset" dur="1s" values="32;0" repeatCount="indefinite" />
+                </circle>
+              </svg>
+              Generating...
+            </>
+          ) : (
+            <>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 17V20H20V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <path d="M12 4V16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <path d="M8 12L12 16L16 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+              PDF
+            </>
+          )}
+        </button>
       </div>
     </div>
   )
