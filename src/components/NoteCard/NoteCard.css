@@ -498,3 +498,128 @@
     font-size: 1rem;
   }
 }
+
+
+
+
+
+
+
+
+
+/* PDF Download Button */
+.download-pdf-btn {
+  background: none;
+  border: 1px solid var(--purple-dark);
+  color: var(--purple-dark);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.download-pdf-btn:hover:not(:disabled) {
+  background-color: var(--purple-dark);
+  color: var(--white);
+}
+
+.download-pdf-btn.downloading {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background-color: var(--gray-light);
+  border-color: var(--gray-border);
+  color: var(--black);
+}
+
+.download-pdf-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.download-pdf-btn .spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* PDF Export Styles (hidden from view, used only for PDF generation) */
+.pdf-export {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 100%;
+  max-width: 800px;
+  background: white;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.pdf-export h1 {
+  color: #4A1D6D;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.pdf-export .markdown-h1 {
+  color: #4A1D6D;
+  font-size: 22px;
+  margin: 15px 0 10px;
+}
+
+.pdf-export .markdown-h2 {
+  color: #4A1D6D;
+  font-size: 20px;
+  margin: 12px 0 8px;
+}
+
+.pdf-export .markdown-h3 {
+  color: #4A1D6D;
+  font-size: 18px;
+  margin: 10px 0 6px;
+}
+
+.pdf-export .markdown-strong {
+  font-weight: 700;
+  color: #4A1D6D;
+}
+
+.pdf-export .markdown-list {
+  margin: 8px 0 8px 20px;
+  list-style-type: disc;
+}
+
+.pdf-export .markdown-code-block {
+  background: #f5f5f5;
+  padding: 10px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 13px;
+  overflow-x: auto;
+}
+
+/* Mobile adjustments for PDF button */
+@media (max-width: 768px) {
+  .download-pdf-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 8px 12px;
+    margin-top: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .download-pdf-btn {
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+}
