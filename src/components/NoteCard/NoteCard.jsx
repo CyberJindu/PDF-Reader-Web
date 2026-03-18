@@ -1,12 +1,15 @@
 import { useState, useRef } from 'react'
 import ReactMarkdown from 'react-markdown'
-import html2pdf from 'html2pdf.js'
 import './NoteCard.css'
+
+
+import html2pdf from 'html2pdf.js';
 
 const NoteCard = ({ note, onPlayAudio, onDelete }) => {
   const [expanded, setExpanded] = useState(false)
   const [isDownloading, setIsDownloading] = useState(false)
   const summaryRef = useRef(null)
+  const pdfContainerRef = useRef(null)
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' }
@@ -24,41 +27,68 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
     setIsDownloading(true)
     
     try {
-      // Create a clean container for PDF export
-      const element = document.createElement('div')
-      element.className = 'pdf-export'
-      element.innerHTML = `
-        <div style="padding: 20px; font-family: 'Inter', sans-serif;">
-          <h1 style="color: #4A1D6D; font-size: 24px; margin-bottom: 10px;">${note.title || 'Summary'}</h1>
-          <div style="color: #666; font-size: 14px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #e0e0e0;">
+      // Create a dedicated container for PDF with proper styling
+      const pdfElement = document.createElement('div')
+      pdfElement.className = 'pdf-export-container'
+      pdfElement.style.cssText = `
+        position: absolute;
+        left: -9999px;
+        top: -9999px;
+        width: 800px;
+        background: white;
+        padding: 30px;
+        font-family: 'Inter', sans-serif;
+        line-height: 1.6;
+        color: #333;
+      `
+      
+      // Add title and metadata
+      pdfElement.innerHTML = `
+        <div style="margin-bottom: 30px;">
+          <h1 style="color: #4A1D6D; font-size: 28px; margin: 0 0 10px 0; font-weight: 700;">${note.title || 'Summary'}</h1>
+          <div style="color: #666; font-size: 14px; padding-bottom: 15px; border-bottom: 2px solid #4A1D6D;">
             Created: ${formatDate(note.createdAt)} • ${note.pages || '?'} pages
           </div>
-          <div style="line-height: 1.6; color: #333;">
-            ${summaryRef.current.innerHTML}
-          </div>
+        </div>
+        <div style="font-size: 14px;">
+          ${summaryRef.current.innerHTML}
         </div>
       `
       
-      // PDF options
+      document.body.appendChild(pdfElement)
+      
+      // Wait a moment for the element to be ready
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      // PDF options with better configuration
       const opt = {
         margin: [0.5, 0.5, 0.5, 0.5],
-        filename: `${note.title || 'summary'}.pdf`,
+        filename: `${note.title?.replace(/[^a-z0-9]/gi, '-').toLowerCase() || 'summary'}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { 
           scale: 2,
           letterRendering: true,
           useCORS: true,
-          logging: false
+          logging: true,
+          backgroundColor: '#ffffff'
         },
         jsPDF: { 
           unit: 'in', 
           format: 'a4', 
-          orientation: 'portrait'
-        }
+          orientation: 'portrait',
+          compress: true
+        },
+        pagebreak: { mode: ['css', 'legacy'] }
       }
       
-      // Generate and download PDF
-      await html2pdf().set(opt).from(element).save()
+      // Generate PDF
+      const worker = html2pdf().set(opt).from(pdfElement)
+      
+      // Save and cleanup
+      await worker.save()
+      
+      // Remove temporary element
+      document.body.removeChild(pdfElement)
       
     } catch (error) {
       console.error('PDF download failed:', error)
@@ -70,26 +100,17 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
 
   // Custom components for markdown rendering
   const MarkdownComponents = {
-    // Headers with proper styling
     h1: ({node, ...props}) => <h1 className="markdown-h1" {...props} />,
     h2: ({node, ...props}) => <h2 className="markdown-h2" {...props} />,
     h3: ({node, ...props}) => <h3 className="markdown-h3" {...props} />,
     h4: ({node, ...props}) => <h4 className="markdown-h4" {...props} />,
-    
-    // Text formatting
     strong: ({node, ...props}) => <strong className="markdown-strong" {...props} />,
     em: ({node, ...props}) => <em className="markdown-em" {...props} />,
     p: ({node, ...props}) => <p className="markdown-paragraph" {...props} />,
-    
-    // Lists
     ul: ({node, ...props}) => <ul className="markdown-list" {...props} />,
     ol: ({node, ...props}) => <ol className="markdown-list" {...props} />,
     li: ({node, ...props}) => <li className="markdown-list-item" {...props} />,
-    
-    // Horizontal rule
     hr: ({node, ...props}) => <hr className="markdown-hr" {...props} />,
-    
-    // Code blocks
     code: ({node, inline, ...props}) => 
       inline ? 
         <code className="markdown-code-inline" {...props} /> : 
@@ -176,7 +197,6 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
           ))}
         </div>
         
-        {/* New Download PDF Button */}
         <button 
           onClick={handleDownloadPDF}
           className={`download-pdf-btn ${isDownloading ? 'downloading' : ''}`}
