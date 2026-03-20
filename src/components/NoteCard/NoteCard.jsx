@@ -20,122 +20,122 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
   }
 
   const handleDownloadPDF = async () => {
-    if (!summaryRef.current) return
+  setIsDownloading(true)
+  
+  try {
+    // Use the FULL summary from the note prop, NOT from the DOM
+    const fullSummaryText = note.summary
     
-    setIsDownloading(true)
+    if (!fullSummaryText || fullSummaryText.length === 0) {
+      alert('No content to export.')
+      setIsDownloading(false)
+      return
+    }
     
-    try {
-      // Get the text content
-      const summaryText = summaryRef.current.innerText || summaryRef.current.textContent
-      
-      if (!summaryText || summaryText.length === 0) {
-        alert('No content to export.')
-        setIsDownloading(false)
-        return
-      }
-      
-      // Create a temporary container for PDF rendering
-      const pdfContainer = document.createElement('div')
-      pdfContainer.style.cssText = `
-        position: absolute;
-        left: -9999px;
-        top: -9999px;
-        width: 800px;
-        background: white;
-        padding: 40px;
-        font-family: 'Inter', 'Helvetica', 'Arial', sans-serif;
-        line-height: 1.6;
-        color: #333333;
-        box-sizing: border-box;
-      `
-      
-      // Build the content with inline styles
-      const formattedContent = summaryText
-        .split('\n')
-        .map(line => {
-          if (line.startsWith('# ')) {
-            return `<h1 style="color: #4A1D6D; font-size: 28px; font-weight: 700; margin: 20px 0 10px 0;">${escapeHtml(line.substring(2))}</h1>`
-          } else if (line.startsWith('## ')) {
-            return `<h2 style="color: #4A1D6D; font-size: 24px; font-weight: 600; margin: 15px 0 8px 0;">${escapeHtml(line.substring(3))}</h2>`
-          } else if (line.startsWith('### ')) {
-            return `<h3 style="color: #4A1D6D; font-size: 20px; font-weight: 600; margin: 12px 0 6px 0;">${escapeHtml(line.substring(4))}</h3>`
-          } else if (line.startsWith('- ')) {
-            return `<div style="margin-left: 20px; margin-bottom: 4px;">• ${escapeHtml(line.substring(2))}</div>`
-          } else if (line.match(/^\d+\. /)) {
-            return `<div style="margin-left: 20px; margin-bottom: 4px;">${line.match(/^\d+/)[0]}. ${escapeHtml(line.substring(line.indexOf('.') + 2))}</div>`
-          } else if (line.trim() === '') {
-            return '<div style="height: 8px;"></div>'
-          } else {
-            // Handle inline bold and italic
-            let formatted = escapeHtml(line)
-            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong style="font-weight: 700; color: #4A1D6D;">$1</strong>')
-            formatted = formatted.replace(/\*(.*?)\*/g, '<em style="font-style: italic;">$1</em>')
-            return `<p style="margin: 8px 0;">${formatted}</p>`
-          }
-        })
-        .join('')
-      
-      pdfContainer.innerHTML = `
-        <div style="margin-bottom: 30px;">
-          <h1 style="color: #4A1D6D; font-size: 32px; margin: 0 0 10px 0; font-weight: 700;">${escapeHtml(note.title || 'Summary')}</h1>
-          <div style="color: #666666; font-size: 14px; padding-bottom: 15px; border-bottom: 2px solid #4A1D6D;">
-            Created: ${formatDate(note.createdAt)} • ${note.pages || '?'} pages
-          </div>
-        </div>
-        <div style="font-size: 14px; color: #333333;">
-          ${formattedContent}
-        </div>
-      `
-      
-      document.body.appendChild(pdfContainer)
-      
-      // Wait for rendering
-      await new Promise(resolve => setTimeout(resolve, 500))
-      
-      // Use html2canvas to capture the element
-      const canvas = await html2canvas(pdfContainer, {
-        scale: 2,
-        backgroundColor: '#ffffff',
-        logging: false,
-        useCORS: true
+    console.log('Full summary length:', fullSummaryText.length) // Debug
+    
+    // Create a temporary container for PDF rendering
+    const pdfContainer = document.createElement('div')
+    pdfContainer.style.cssText = `
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
+      width: 800px;
+      background: white;
+      padding: 40px;
+      font-family: 'Inter', 'Helvetica', 'Arial', sans-serif;
+      line-height: 1.6;
+      color: #333333;
+      box-sizing: border-box;
+    `
+    
+    // Build the content with inline styles - using FULL summary text
+    const formattedContent = fullSummaryText
+      .split('\n')
+      .map(line => {
+        if (line.startsWith('# ')) {
+          return `<h1 style="color: #4A1D6D; font-size: 28px; font-weight: 700; margin: 20px 0 10px 0;">${escapeHtml(line.substring(2))}</h1>`
+        } else if (line.startsWith('## ')) {
+          return `<h2 style="color: #4A1D6D; font-size: 24px; font-weight: 600; margin: 15px 0 8px 0;">${escapeHtml(line.substring(3))}</h2>`
+        } else if (line.startsWith('### ')) {
+          return `<h3 style="color: #4A1D6D; font-size: 20px; font-weight: 600; margin: 12px 0 6px 0;">${escapeHtml(line.substring(4))}</h3>`
+        } else if (line.startsWith('- ')) {
+          return `<div style="margin-left: 20px; margin-bottom: 4px;">• ${escapeHtml(line.substring(2))}</div>`
+        } else if (line.match(/^\d+\. /)) {
+          return `<div style="margin-left: 20px; margin-bottom: 4px;">${line.match(/^\d+/)[0]}. ${escapeHtml(line.substring(line.indexOf('.') + 2))}</div>`
+        } else if (line.trim() === '') {
+          return '<div style="height: 8px;"></div>'
+        } else {
+          // Handle inline bold and italic
+          let formatted = escapeHtml(line)
+          formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong style="font-weight: 700; color: #4A1D6D;">$1</strong>')
+          formatted = formatted.replace(/\*(.*?)\*/g, '<em style="font-style: italic;">$1</em>')
+          return `<p style="margin: 8px 0;">${formatted}</p>`
+        }
       })
-      
-      // Create PDF and add the canvas image
-      const imgData = canvas.toDataURL('image/png')
-      const pdf = new jsPDF({
-        unit: 'mm',
-        format: 'a4',
-        orientation: 'portrait'
-      })
-      
-      const imgWidth = 210 // A4 width in mm
-      const pageHeight = 297 // A4 height in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width
-      let heightLeft = imgHeight
-      let position = 0
-      
+      .join('')
+    
+    pdfContainer.innerHTML = `
+      <div style="margin-bottom: 30px;">
+        <h1 style="color: #4A1D6D; font-size: 32px; margin: 0 0 10px 0; font-weight: 700;">${escapeHtml(note.title || 'Summary')}</h1>
+        <div style="color: #666666; font-size: 14px; padding-bottom: 15px; border-bottom: 2px solid #4A1D6D;">
+          Created: ${formatDate(note.createdAt)} • ${note.pages || '?'} pages
+        </div>
+      </div>
+      <div style="font-size: 14px; color: #333333;">
+        ${formattedContent}
+      </div>
+    `
+    
+    document.body.appendChild(pdfContainer)
+    
+    // Wait for rendering
+    await new Promise(resolve => setTimeout(resolve, 500))
+    
+    // Use html2canvas to capture the element
+    const canvas = await html2canvas(pdfContainer, {
+      scale: 2,
+      backgroundColor: '#ffffff',
+      logging: false,
+      useCORS: true
+    })
+    
+    // Create PDF and add the canvas image
+    const imgData = canvas.toDataURL('image/png')
+    const pdf = new jsPDF({
+      unit: 'mm',
+      format: 'a4',
+      orientation: 'portrait'
+    })
+    
+    const imgWidth = 210 // A4 width in mm
+    const pageHeight = 297 // A4 height in mm
+    const imgHeight = (canvas.height * imgWidth) / canvas.width
+    let heightLeft = imgHeight
+    let position = 0
+    
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+    heightLeft -= pageHeight
+    
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight
+      pdf.addPage()
       pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
       heightLeft -= pageHeight
-      
-      while (heightLeft > 0) {
-        position = heightLeft - imgHeight
-        pdf.addPage()
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-        heightLeft -= pageHeight
-      }
-      
-      pdf.save(`${note.title?.replace(/[^a-z0-9]/gi, '-').toLowerCase() || 'summary'}.pdf`)
-      
-      // Clean up
-      document.body.removeChild(pdfContainer)
-      
-    } catch (error) {
-      console.error('PDF download failed:', error)
-      alert('Failed to download PDF. Please try again.')
-    } finally {
-      setIsDownloading(false)
     }
+    
+    pdf.save(`${note.title?.replace(/[^a-z0-9]/gi, '-').toLowerCase() || 'summary'}.pdf`)
+    
+    // Clean up
+    document.body.removeChild(pdfContainer)
+    
+  } catch (error) {
+    console.error('PDF download failed:', error)
+    alert('Failed to download PDF. Please try again.')
+  } finally {
+    setIsDownloading(false)
   }
+}
   
   // Helper function to escape HTML
   const escapeHtml = (text) => {
