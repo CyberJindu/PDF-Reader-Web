@@ -19,103 +19,140 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
   }
 
   const handleDownloadPDF = async () => {
-    if (!summaryRef.current) return
-    
-    setIsDownloading(true)
-    
-    try {
-      // Get the raw text content instead of HTML with classes
-      const summaryText = summaryRef.current.innerText || summaryRef.current.textContent
-      
-      // Create a dedicated container for PDF with INLINE STYLES only
-      const pdfElement = document.createElement('div')
-      pdfElement.style.cssText = `
-        position: absolute;
-        left: -9999px;
-        top: -9999px;
-        width: 800px;
-        background: white;
-        padding: 40px;
-        font-family: 'Inter', 'Helvetica', 'Arial', sans-serif;
-        line-height: 1.6;
-        color: #333333;
-      `
-      
-      // Process the summary to maintain some formatting
-      // Convert markdown-style formatting to styled HTML
-      const formattedContent = summaryText
-        .split('\n')
-        .map(line => {
-          if (line.startsWith('# ')) {
-            return `<h1 style="color: #4A1D6D; font-size: 28px; font-weight: 700; margin: 20px 0 10px 0;">${line.substring(2)}</h1>`
-          } else if (line.startsWith('## ')) {
-            return `<h2 style="color: #4A1D6D; font-size: 24px; font-weight: 600; margin: 15px 0 8px 0;">${line.substring(3)}</h2>`
-          } else if (line.startsWith('### ')) {
-            return `<h3 style="color: #4A1D6D; font-size: 20px; font-weight: 600; margin: 12px 0 6px 0;">${line.substring(4)}</h3>`
-          } else if (line.startsWith('- ')) {
-            return `<li style="margin-left: 20px; list-style-type: disc;">${line.substring(2)}</li>`
-          } else if (line.match(/^\d+\. /)) {
-            return `<li style="margin-left: 20px; list-style-type: decimal;">${line.substring(line.indexOf('.') + 2)}</li>`
-          } else if (line.startsWith('**') && line.endsWith('**')) {
-            return `<p><strong style="font-weight: 700; color: #4A1D6D;">${line.substring(2, line.length - 2)}</strong></p>`
-          } else if (line.startsWith('*') && line.endsWith('*')) {
-            return `<p><em style="font-style: italic;">${line.substring(1, line.length - 1)}</em></p>`
-          } else if (line.trim() === '') {
-            return '<br/>'
-          } else {
-            return `<p style="margin: 8px 0;">${line}</p>`
-          }
-        })
-        .join('')
-      
-      // Add title and metadata with inline styles
-      pdfElement.innerHTML = `
-        <div style="margin-bottom: 30px;">
-          <h1 style="color: #4A1D6D; font-size: 32px; margin: 0 0 10px 0; font-weight: 700;">${note.title || 'Summary'}</h1>
-          <div style="color: #666666; font-size: 14px; padding-bottom: 15px; border-bottom: 2px solid #4A1D6D;">
-            Created: ${formatDate(note.createdAt)} • ${note.pages || '?'} pages
-          </div>
-        </div>
-        <div style="font-size: 14px; color: #333333;">
-          ${formattedContent}
-        </div>
-      `
-      
-      document.body.appendChild(pdfElement)
-      
-      // PDF options
-      const opt = {
-        margin: [0.5, 0.5, 0.5, 0.5],
-        filename: `${note.title?.replace(/[^a-z0-9]/gi, '-').toLowerCase() || 'summary'}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { 
-          scale: 2,
-          letterRendering: true,
-          useCORS: true,
-          logging: false,
-          backgroundColor: '#ffffff'
-        },
-        jsPDF: { 
-          unit: 'in', 
-          format: 'a4', 
-          orientation: 'portrait',
-          compress: true
-        }
-      }
-      
-      // Generate and save PDF
-      await html2pdf().set(opt).from(pdfElement).save()
-      
-      // Clean up
-      document.body.removeChild(pdfElement)
-      
-    } catch (error) {
-      console.error('PDF download failed:', error)
-      alert('Failed to download PDF. Please try again.')
-    } finally {
-      setIsDownloading(false)
-    }
+  console.log('=== PDF DOWNLOAD DEBUG ===')
+  
+  if (!summaryRef.current) {
+    console.error('❌ summaryRef.current is null!')
+    setIsDownloading(false)
+    return
   }
+  
+  setIsDownloading(true)
+  
+  try {
+    // DEBUG 1: Check what's in summaryRef
+    console.log('1. summaryRef.current exists')
+    console.log('2. Inner HTML length:', summaryRef.current.innerHTML?.length)
+    console.log('3. Inner text length:', summaryRef.current.innerText?.length)
+    console.log('4. First 200 chars of inner text:', summaryRef.current.innerText?.substring(0, 200))
+    
+    // Get the raw text content
+    const summaryText = summaryRef.current.innerText || summaryRef.current.textContent
+    console.log('5. Summary text length:', summaryText?.length)
+    
+    if (!summaryText || summaryText.length === 0) {
+      console.error('❌ No text content found!')
+      alert('No content to export. Please wait for the summary to load.')
+      setIsDownloading(false)
+      return
+    }
+    
+    // Create a dedicated container for PDF with INLINE STYLES only
+    const pdfElement = document.createElement('div')
+    pdfElement.style.cssText = `
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
+      width: 800px;
+      background: white;
+      padding: 40px;
+      font-family: 'Inter', 'Helvetica', 'Arial', sans-serif;
+      line-height: 1.6;
+      color: #333333;
+    `
+    
+    // Process the summary to maintain some formatting
+    console.log('6. Processing content for PDF...')
+    
+    const formattedContent = summaryText
+      .split('\n')
+      .map((line, index) => {
+        if (line.startsWith('# ')) {
+          return `<h1 style="color: #4A1D6D; font-size: 28px; font-weight: 700; margin: 20px 0 10px 0;">${line.substring(2)}</h1>`
+        } else if (line.startsWith('## ')) {
+          return `<h2 style="color: #4A1D6D; font-size: 24px; font-weight: 600; margin: 15px 0 8px 0;">${line.substring(3)}</h2>`
+        } else if (line.startsWith('### ')) {
+          return `<h3 style="color: #4A1D6D; font-size: 20px; font-weight: 600; margin: 12px 0 6px 0;">${line.substring(4)}</h3>`
+        } else if (line.startsWith('- ')) {
+          return `<li style="margin-left: 20px; list-style-type: disc;">${line.substring(2)}</li>`
+        } else if (line.match(/^\d+\. /)) {
+          return `<li style="margin-left: 20px; list-style-type: decimal;">${line.substring(line.indexOf('.') + 2)}</li>`
+        } else if (line.trim() === '') {
+          return '<br/>'
+        } else {
+          // Check for inline markdown
+          let formattedLine = line
+          formattedLine = formattedLine.replace(/\*\*(.*?)\*\*/g, '<strong style="font-weight: 700; color: #4A1D6D;">$1</strong>')
+          formattedLine = formattedLine.replace(/\*(.*?)\*/g, '<em style="font-style: italic;">$1</em>')
+          return `<p style="margin: 8px 0;">${formattedLine}</p>`
+        }
+      })
+      .join('')
+    
+    console.log('7. Formatted content length:', formattedContent?.length)
+    console.log('8. First 200 chars of formatted content:', formattedContent?.substring(0, 200))
+    
+    // Add title and metadata with inline styles
+    pdfElement.innerHTML = `
+      <div style="margin-bottom: 30px;">
+        <h1 style="color: #4A1D6D; font-size: 32px; margin: 0 0 10px 0; font-weight: 700;">${note.title || 'Summary'}</h1>
+        <div style="color: #666666; font-size: 14px; padding-bottom: 15px; border-bottom: 2px solid #4A1D6D;">
+          Created: ${formatDate(note.createdAt)} • ${note.pages || '?'} pages
+        </div>
+      </div>
+      <div style="font-size: 14px; color: #333333;">
+        ${formattedContent}
+      </div>
+    `
+    
+    document.body.appendChild(pdfElement)
+    console.log('9. PDF element created and appended to body')
+    
+    // Wait a moment for the element to be ready
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    console.log('10. Waited 1 second for element to be ready')
+    
+    // PDF options
+    const opt = {
+      margin: [0.5, 0.5, 0.5, 0.5],
+      filename: `${note.title?.replace(/[^a-z0-9]/gi, '-').toLowerCase() || 'summary'}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { 
+        scale: 2,
+        letterRendering: true,
+        useCORS: true,
+        logging: true,
+        backgroundColor: '#ffffff'
+      },
+      jsPDF: { 
+        unit: 'in', 
+        format: 'a4', 
+        orientation: 'portrait',
+        compress: true
+      }
+    }
+    
+    console.log('11. Generating PDF with options:', opt)
+    
+    // Generate and save PDF
+    const worker = html2pdf().set(opt).from(pdfElement)
+    await worker.save()
+    
+    console.log('12. PDF saved successfully!')
+    
+    // Clean up
+    document.body.removeChild(pdfElement)
+    console.log('13. Cleaned up temporary element')
+    console.log('=== PDF DOWNLOAD COMPLETE ===')
+    
+  } catch (error) {
+    console.error('❌ PDF download failed:', error)
+    console.error('Error details:', error.message)
+    alert('Failed to download PDF. Please try again.')
+  } finally {
+    setIsDownloading(false)
+  }
+}
 
   // Custom components for markdown rendering
   const MarkdownComponents = {
