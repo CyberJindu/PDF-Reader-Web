@@ -23,16 +23,42 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
   setIsDownloading(true)
   
   try {
-    // Use the FULL summary from the note prop
-    const fullSummaryText = note.summary
+    // Get the ACTUAL rendered content from the DOM
+    // We need to capture either the expanded or full content based on state
+    let contentElement
     
-    if (!fullSummaryText || fullSummaryText.length === 0) {
+    if (expanded) {
+      // If expanded, use the current ref (shows full content)
+      contentElement = summaryRef.current
+    } else {
+      // If not expanded, we need to temporarily expand to get full content
+      // Store original expanded state
+      const wasExpanded = expanded
+      
+      // Temporarily expand to render full content
+      setExpanded(true)
+      
+      // Wait for React to re-render
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
+      // Now get the full content
+      contentElement = summaryRef.current
+      
+      // Restore original state
+      setExpanded(wasExpanded)
+      
+      // Wait for revert to finish
+      await new Promise(resolve => setTimeout(resolve, 50))
+    }
+    
+    if (!contentElement) {
       alert('No content to export.')
       setIsDownloading(false)
       return
     }
     
-    console.log('Full summary length:', fullSummaryText.length)
+    // Clone the rendered content with all its styles
+    const contentClone = contentElement.cloneNode(true)
     
     // Create a temporary container for PDF rendering
     const pdfContainer = document.createElement('div')
@@ -44,76 +70,10 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
       background: white;
       padding: 40px;
       font-family: 'Inter', 'Helvetica', 'Arial', sans-serif;
-      line-height: 1.6;
-      color: #333333;
       box-sizing: border-box;
     `
     
-    // Process the text line by line
-    const lines = fullSummaryText.split('\n')
-    const formattedLines = []
-    
-    for (let i = 0; i < lines.length; i++) {
-      let line = lines[i]
-      
-      // Check for horizontal rule (--- or ***)
-      if (line.trim() === '---' || line.trim() === '***' || line.trim() === '___') {
-        formattedLines.push('<hr style="margin: 20px 0; border: 0; height: 1px; background: linear-gradient(to right, transparent, #4A1D6D, transparent);" />')
-        continue
-      }
-      
-      // Headers
-      if (line.startsWith('# ')) {
-        formattedLines.push(`<h1 style="color: #4A1D6D; font-size: 28px; font-weight: 700; margin: 20px 0 10px 0;">${escapeHtml(line.substring(2))}</h1>`)
-        continue
-      }
-      if (line.startsWith('## ')) {
-        formattedLines.push(`<h2 style="color: #4A1D6D; font-size: 24px; font-weight: 600; margin: 15px 0 8px 0;">${escapeHtml(line.substring(3))}</h2>`)
-        continue
-      }
-      if (line.startsWith('### ')) {
-        formattedLines.push(`<h3 style="color: #4A1D6D; font-size: 20px; font-weight: 600; margin: 12px 0 6px 0;">${escapeHtml(line.substring(4))}</h3>`)
-        continue
-      }
-      if (line.startsWith('#### ')) {
-        formattedLines.push(`<h4 style="color: #4A1D6D; font-size: 18px; font-weight: 600; margin: 10px 0 4px 0;">${escapeHtml(line.substring(5))}</h4>`)
-        continue
-      }
-      
-      // Lists
-      if (line.startsWith('- ')) {
-        formattedLines.push(`<div style="margin-left: 20px; margin-bottom: 4px;">• ${escapeHtml(line.substring(2))}</div>`)
-        continue
-      }
-      if (line.match(/^\d+\. /)) {
-        const match = line.match(/^(\d+)\. /)
-        formattedLines.push(`<div style="margin-left: 20px; margin-bottom: 4px;">${match[1]}. ${escapeHtml(line.substring(match[0].length))}</div>`)
-        continue
-      }
-      
-      // Empty lines
-      if (line.trim() === '') {
-        formattedLines.push('<div style="height: 8px;"></div>')
-        continue
-      }
-      
-      // Regular text - handle inline formatting
-      let formatted = escapeHtml(line)
-      
-      // Handle bold **text**
-      formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong style="font-weight: 700; color: #4A1D6D;">$1</strong>')
-      
-      // Handle italic *text* (but not when it's part of bold)
-      formatted = formatted.replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em style="font-style: italic;">$1</em>')
-      
-      // Handle inline code `code`
-      formatted = formatted.replace(/`(.*?)`/g, '<code style="background-color: #f5f5f5; padding: 2px 4px; border-radius: 4px; font-family: monospace;">$1</code>')
-      
-      formattedLines.push(`<p style="margin: 8px 0;">${formatted}</p>`)
-    }
-    
-    const formattedContent = formattedLines.join('')
-    
+    // Add title and metadata
     pdfContainer.innerHTML = `
       <div style="margin-bottom: 30px;">
         <h1 style="color: #4A1D6D; font-size: 32px; margin: 0 0 10px 0; font-weight: 700;">${escapeHtml(note.title || 'Summary')}</h1>
@@ -122,7 +82,7 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
         </div>
       </div>
       <div style="font-size: 14px; color: #333333;">
-        ${formattedContent}
+        ${contentClone.outerHTML}
       </div>
     `
     
@@ -136,7 +96,26 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
       scale: 2,
       backgroundColor: '#ffffff',
       logging: false,
-      useCORS: true
+      useCORS: true,
+      onclone: (clonedDoc, element) => {
+        // Make sure styles are applied in the cloned document
+        const style = document.createElement('style')
+        style.textContent = `
+          .markdown-h1 { color: #4A1D6D; font-size: 28px; font-weight: 700; margin: 20px 0 10px; }
+          .markdown-h2 { color: #4A1D6D; font-size: 24px; font-weight: 600; margin: 15px 0 8px; }
+          .markdown-h3 { color: #4A1D6D; font-size: 20px; font-weight: 600; margin: 12px 0 6px; }
+          .markdown-h4 { color: #4A1D6D; font-size: 18px; font-weight: 600; margin: 10px 0 4px; }
+          .markdown-strong { font-weight: 700; color: #4A1D6D; }
+          .markdown-em { font-style: italic; }
+          .markdown-list { margin: 8px 0 8px 20px; list-style-type: disc; }
+          .markdown-list-item { margin: 4px 0; }
+          .markdown-paragraph { margin: 8px 0; }
+          .markdown-code-inline { background: #f5f5f5; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+          .markdown-code-block { background: #f5f5f5; padding: 12px; border-radius: 4px; font-family: monospace; white-space: pre-wrap; }
+          .markdown-hr { margin: 20px 0; border: 0; height: 1px; background: linear-gradient(to right, transparent, #4A1D6D, transparent); }
+        `
+        clonedDoc.head.appendChild(style)
+      }
     })
     
     // Create PDF and add the canvas image
