@@ -23,7 +23,7 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
   setIsDownloading(true)
   
   try {
-    // Use the FULL summary from the note prop, NOT from the DOM
+    // Use the FULL summary from the note prop
     const fullSummaryText = note.summary
     
     if (!fullSummaryText || fullSummaryText.length === 0) {
@@ -32,7 +32,7 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
       return
     }
     
-    console.log('Full summary length:', fullSummaryText.length) // Debug
+    console.log('Full summary length:', fullSummaryText.length)
     
     // Create a temporary container for PDF rendering
     const pdfContainer = document.createElement('div')
@@ -49,31 +49,70 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
       box-sizing: border-box;
     `
     
-    // Build the content with inline styles - using FULL summary text
-    const formattedContent = fullSummaryText
-      .split('\n')
-      .map(line => {
-        if (line.startsWith('# ')) {
-          return `<h1 style="color: #4A1D6D; font-size: 28px; font-weight: 700; margin: 20px 0 10px 0;">${escapeHtml(line.substring(2))}</h1>`
-        } else if (line.startsWith('## ')) {
-          return `<h2 style="color: #4A1D6D; font-size: 24px; font-weight: 600; margin: 15px 0 8px 0;">${escapeHtml(line.substring(3))}</h2>`
-        } else if (line.startsWith('### ')) {
-          return `<h3 style="color: #4A1D6D; font-size: 20px; font-weight: 600; margin: 12px 0 6px 0;">${escapeHtml(line.substring(4))}</h3>`
-        } else if (line.startsWith('- ')) {
-          return `<div style="margin-left: 20px; margin-bottom: 4px;">• ${escapeHtml(line.substring(2))}</div>`
-        } else if (line.match(/^\d+\. /)) {
-          return `<div style="margin-left: 20px; margin-bottom: 4px;">${line.match(/^\d+/)[0]}. ${escapeHtml(line.substring(line.indexOf('.') + 2))}</div>`
-        } else if (line.trim() === '') {
-          return '<div style="height: 8px;"></div>'
-        } else {
-          // Handle inline bold and italic
-          let formatted = escapeHtml(line)
-          formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong style="font-weight: 700; color: #4A1D6D;">$1</strong>')
-          formatted = formatted.replace(/\*(.*?)\*/g, '<em style="font-style: italic;">$1</em>')
-          return `<p style="margin: 8px 0;">${formatted}</p>`
-        }
-      })
-      .join('')
+    // Process the text line by line
+    const lines = fullSummaryText.split('\n')
+    const formattedLines = []
+    
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i]
+      
+      // Check for horizontal rule (--- or ***)
+      if (line.trim() === '---' || line.trim() === '***' || line.trim() === '___') {
+        formattedLines.push('<hr style="margin: 20px 0; border: 0; height: 1px; background: linear-gradient(to right, transparent, #4A1D6D, transparent);" />')
+        continue
+      }
+      
+      // Headers
+      if (line.startsWith('# ')) {
+        formattedLines.push(`<h1 style="color: #4A1D6D; font-size: 28px; font-weight: 700; margin: 20px 0 10px 0;">${escapeHtml(line.substring(2))}</h1>`)
+        continue
+      }
+      if (line.startsWith('## ')) {
+        formattedLines.push(`<h2 style="color: #4A1D6D; font-size: 24px; font-weight: 600; margin: 15px 0 8px 0;">${escapeHtml(line.substring(3))}</h2>`)
+        continue
+      }
+      if (line.startsWith('### ')) {
+        formattedLines.push(`<h3 style="color: #4A1D6D; font-size: 20px; font-weight: 600; margin: 12px 0 6px 0;">${escapeHtml(line.substring(4))}</h3>`)
+        continue
+      }
+      if (line.startsWith('#### ')) {
+        formattedLines.push(`<h4 style="color: #4A1D6D; font-size: 18px; font-weight: 600; margin: 10px 0 4px 0;">${escapeHtml(line.substring(5))}</h4>`)
+        continue
+      }
+      
+      // Lists
+      if (line.startsWith('- ')) {
+        formattedLines.push(`<div style="margin-left: 20px; margin-bottom: 4px;">• ${escapeHtml(line.substring(2))}</div>`)
+        continue
+      }
+      if (line.match(/^\d+\. /)) {
+        const match = line.match(/^(\d+)\. /)
+        formattedLines.push(`<div style="margin-left: 20px; margin-bottom: 4px;">${match[1]}. ${escapeHtml(line.substring(match[0].length))}</div>`)
+        continue
+      }
+      
+      // Empty lines
+      if (line.trim() === '') {
+        formattedLines.push('<div style="height: 8px;"></div>')
+        continue
+      }
+      
+      // Regular text - handle inline formatting
+      let formatted = escapeHtml(line)
+      
+      // Handle bold **text**
+      formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong style="font-weight: 700; color: #4A1D6D;">$1</strong>')
+      
+      // Handle italic *text* (but not when it's part of bold)
+      formatted = formatted.replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em style="font-style: italic;">$1</em>')
+      
+      // Handle inline code `code`
+      formatted = formatted.replace(/`(.*?)`/g, '<code style="background-color: #f5f5f5; padding: 2px 4px; border-radius: 4px; font-family: monospace;">$1</code>')
+      
+      formattedLines.push(`<p style="margin: 8px 0;">${formatted}</p>`)
+    }
+    
+    const formattedContent = formattedLines.join('')
     
     pdfContainer.innerHTML = `
       <div style="margin-bottom: 30px;">
