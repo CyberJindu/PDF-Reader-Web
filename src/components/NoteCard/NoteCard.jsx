@@ -1,15 +1,12 @@
 import { useState, useRef } from 'react'
 import ReactMarkdown from 'react-markdown'
+import html2pdf from 'html2pdf.js'
 import './NoteCard.css'
-
-
-import html2pdf from 'html2pdf.js';
 
 const NoteCard = ({ note, onPlayAudio, onDelete }) => {
   const [expanded, setExpanded] = useState(false)
   const [isDownloading, setIsDownloading] = useState(false)
   const summaryRef = useRef(null)
-  const pdfContainerRef = useRef(null)
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' }
@@ -27,40 +24,66 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
     setIsDownloading(true)
     
     try {
-      // Create a dedicated container for PDF with proper styling
+      // Get the raw text content instead of HTML with classes
+      const summaryText = summaryRef.current.innerText || summaryRef.current.textContent
+      
+      // Create a dedicated container for PDF with INLINE STYLES only
       const pdfElement = document.createElement('div')
-      pdfElement.className = 'pdf-export-container'
       pdfElement.style.cssText = `
         position: absolute;
         left: -9999px;
         top: -9999px;
         width: 800px;
         background: white;
-        padding: 30px;
-        font-family: 'Inter', sans-serif;
+        padding: 40px;
+        font-family: 'Inter', 'Helvetica', 'Arial', sans-serif;
         line-height: 1.6;
-        color: #333;
+        color: #333333;
       `
       
-      // Add title and metadata
+      // Process the summary to maintain some formatting
+      // Convert markdown-style formatting to styled HTML
+      const formattedContent = summaryText
+        .split('\n')
+        .map(line => {
+          if (line.startsWith('# ')) {
+            return `<h1 style="color: #4A1D6D; font-size: 28px; font-weight: 700; margin: 20px 0 10px 0;">${line.substring(2)}</h1>`
+          } else if (line.startsWith('## ')) {
+            return `<h2 style="color: #4A1D6D; font-size: 24px; font-weight: 600; margin: 15px 0 8px 0;">${line.substring(3)}</h2>`
+          } else if (line.startsWith('### ')) {
+            return `<h3 style="color: #4A1D6D; font-size: 20px; font-weight: 600; margin: 12px 0 6px 0;">${line.substring(4)}</h3>`
+          } else if (line.startsWith('- ')) {
+            return `<li style="margin-left: 20px; list-style-type: disc;">${line.substring(2)}</li>`
+          } else if (line.match(/^\d+\. /)) {
+            return `<li style="margin-left: 20px; list-style-type: decimal;">${line.substring(line.indexOf('.') + 2)}</li>`
+          } else if (line.startsWith('**') && line.endsWith('**')) {
+            return `<p><strong style="font-weight: 700; color: #4A1D6D;">${line.substring(2, line.length - 2)}</strong></p>`
+          } else if (line.startsWith('*') && line.endsWith('*')) {
+            return `<p><em style="font-style: italic;">${line.substring(1, line.length - 1)}</em></p>`
+          } else if (line.trim() === '') {
+            return '<br/>'
+          } else {
+            return `<p style="margin: 8px 0;">${line}</p>`
+          }
+        })
+        .join('')
+      
+      // Add title and metadata with inline styles
       pdfElement.innerHTML = `
         <div style="margin-bottom: 30px;">
-          <h1 style="color: #4A1D6D; font-size: 28px; margin: 0 0 10px 0; font-weight: 700;">${note.title || 'Summary'}</h1>
-          <div style="color: #666; font-size: 14px; padding-bottom: 15px; border-bottom: 2px solid #4A1D6D;">
+          <h1 style="color: #4A1D6D; font-size: 32px; margin: 0 0 10px 0; font-weight: 700;">${note.title || 'Summary'}</h1>
+          <div style="color: #666666; font-size: 14px; padding-bottom: 15px; border-bottom: 2px solid #4A1D6D;">
             Created: ${formatDate(note.createdAt)} • ${note.pages || '?'} pages
           </div>
         </div>
-        <div style="font-size: 14px;">
-          ${summaryRef.current.innerHTML}
+        <div style="font-size: 14px; color: #333333;">
+          ${formattedContent}
         </div>
       `
       
       document.body.appendChild(pdfElement)
       
-      // Wait a moment for the element to be ready
-      await new Promise(resolve => setTimeout(resolve, 500))
-      
-      // PDF options with better configuration
+      // PDF options
       const opt = {
         margin: [0.5, 0.5, 0.5, 0.5],
         filename: `${note.title?.replace(/[^a-z0-9]/gi, '-').toLowerCase() || 'summary'}.pdf`,
@@ -69,7 +92,7 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
           scale: 2,
           letterRendering: true,
           useCORS: true,
-          logging: true,
+          logging: false,
           backgroundColor: '#ffffff'
         },
         jsPDF: { 
@@ -77,17 +100,13 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
           format: 'a4', 
           orientation: 'portrait',
           compress: true
-        },
-        pagebreak: { mode: ['css', 'legacy'] }
+        }
       }
       
-      // Generate PDF
-      const worker = html2pdf().set(opt).from(pdfElement)
+      // Generate and save PDF
+      await html2pdf().set(opt).from(pdfElement).save()
       
-      // Save and cleanup
-      await worker.save()
-      
-      // Remove temporary element
+      // Clean up
       document.body.removeChild(pdfElement)
       
     } catch (error) {
