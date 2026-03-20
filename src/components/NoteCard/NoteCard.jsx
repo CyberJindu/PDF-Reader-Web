@@ -49,67 +49,128 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
       box-sizing: border-box;
     `
     
-    // Process the text line by line
+    // Process the text line by line with better list handling
     const lines = fullSummaryText.split('\n')
     const formattedLines = []
+    let inList = false
+    let listType = null // 'bullet' or 'numbered'
     
     for (let i = 0; i < lines.length; i++) {
       let line = lines[i]
       
       // Check for horizontal rule (--- or ***)
       if (line.trim() === '---' || line.trim() === '***' || line.trim() === '___') {
+        if (inList) {
+          formattedLines.push(inList ? `</${listType === 'bullet' ? 'ul' : 'ol'}>` : '')
+          inList = false
+          listType = null
+        }
         formattedLines.push('<hr style="margin: 20px 0; border: 0; height: 1px; background: linear-gradient(to right, transparent, #4A1D6D, transparent);" />')
         continue
       }
       
       // Headers
       if (line.startsWith('# ')) {
+        if (inList) {
+          formattedLines.push(`</${listType === 'bullet' ? 'ul' : 'ol'}>`)
+          inList = false
+          listType = null
+        }
         formattedLines.push(`<h1 style="color: #4A1D6D; font-size: 28px; font-weight: 700; margin: 20px 0 10px 0;">${escapeHtml(line.substring(2))}</h1>`)
         continue
       }
       if (line.startsWith('## ')) {
+        if (inList) {
+          formattedLines.push(`</${listType === 'bullet' ? 'ul' : 'ol'}>`)
+          inList = false
+          listType = null
+        }
         formattedLines.push(`<h2 style="color: #4A1D6D; font-size: 24px; font-weight: 600; margin: 15px 0 8px 0;">${escapeHtml(line.substring(3))}</h2>`)
         continue
       }
       if (line.startsWith('### ')) {
+        if (inList) {
+          formattedLines.push(`</${listType === 'bullet' ? 'ul' : 'ol'}>`)
+          inList = false
+          listType = null
+        }
         formattedLines.push(`<h3 style="color: #4A1D6D; font-size: 20px; font-weight: 600; margin: 12px 0 6px 0;">${escapeHtml(line.substring(4))}</h3>`)
         continue
       }
       if (line.startsWith('#### ')) {
+        if (inList) {
+          formattedLines.push(`</${listType === 'bullet' ? 'ul' : 'ol'}>`)
+          inList = false
+          listType = null
+        }
         formattedLines.push(`<h4 style="color: #4A1D6D; font-size: 18px; font-weight: 600; margin: 10px 0 4px 0;">${escapeHtml(line.substring(5))}</h4>`)
         continue
       }
       
-      // Lists
+      // Bullet points - start a list if needed
       if (line.startsWith('- ')) {
-        formattedLines.push(`<div style="margin-left: 20px; margin-bottom: 4px;">• ${escapeHtml(line.substring(2))}</div>`)
-        continue
-      }
-      if (line.match(/^\d+\. /)) {
-        const match = line.match(/^(\d+)\. /)
-        formattedLines.push(`<div style="margin-left: 20px; margin-bottom: 4px;">${match[1]}. ${escapeHtml(line.substring(match[0].length))}</div>`)
+        if (!inList) {
+          // Start a new bullet list
+          formattedLines.push('<ul style="margin: 8px 0; padding-left: 20px; list-style-type: disc;">')
+          inList = true
+          listType = 'bullet'
+        }
+        formattedLines.push(`<li style="margin: 4px 0;">${escapeHtml(line.substring(2))}</li>`)
         continue
       }
       
-      // Empty lines
+      // Numbered list items
+      if (line.match(/^\d+\. /)) {
+        if (!inList || listType !== 'numbered') {
+          if (inList) {
+            formattedLines.push(`</${listType === 'bullet' ? 'ul' : 'ol'}>`)
+          }
+          // Start a new numbered list
+          formattedLines.push('<ol style="margin: 8px 0; padding-left: 20px; list-style-type: decimal;">')
+          inList = true
+          listType = 'numbered'
+        }
+        const match = line.match(/^(\d+)\. /)
+        formattedLines.push(`<li style="margin: 4px 0;">${escapeHtml(line.substring(match[0].length))}</li>`)
+        continue
+      }
+      
+      // Empty lines - close any open list
       if (line.trim() === '') {
+        if (inList) {
+          formattedLines.push(`</${listType === 'bullet' ? 'ul' : 'ol'}>`)
+          inList = false
+          listType = null
+        }
         formattedLines.push('<div style="height: 8px;"></div>')
         continue
       }
       
-      // Regular text - handle inline formatting
+      // Regular text - close any open list first
+      if (inList) {
+        formattedLines.push(`</${listType === 'bullet' ? 'ul' : 'ol'}>`)
+        inList = false
+        listType = null
+      }
+      
+      // Handle inline formatting
       let formatted = escapeHtml(line)
       
       // Handle bold **text**
       formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong style="font-weight: 700; color: #4A1D6D;">$1</strong>')
       
-      // Handle italic *text* (but not when it's part of bold)
-      formatted = formatted.replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em style="font-style: italic;">$1</em>')
+      // Handle italic *text*
+      formatted = formatted.replace(/\*(.*?)\*/g, '<em style="font-style: italic;">$1</em>')
       
       // Handle inline code `code`
       formatted = formatted.replace(/`(.*?)`/g, '<code style="background-color: #f5f5f5; padding: 2px 4px; border-radius: 4px; font-family: monospace;">$1</code>')
       
       formattedLines.push(`<p style="margin: 8px 0;">${formatted}</p>`)
+    }
+    
+    // Close any remaining open list
+    if (inList) {
+      formattedLines.push(`</${listType === 'bullet' ? 'ul' : 'ol'}>`)
     }
     
     const formattedContent = formattedLines.join('')
