@@ -7,6 +7,7 @@ import './NoteCard.css'
 const NoteCard = ({ note, onPlayAudio, onDelete }) => {
   const [expanded, setExpanded] = useState(false)
   const [isDownloading, setIsDownloading] = useState(false)
+  const summaryRef = useRef(null)
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' }
@@ -18,7 +19,6 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
     return text.substr(0, maxLength) + '...'
   }
 
-  // Custom components for markdown rendering (same as before)
   const MarkdownComponents = {
     h1: ({node, ...props}) => <h1 className="markdown-h1" {...props} />,
     h2: ({node, ...props}) => <h2 className="markdown-h2" {...props} />,
@@ -38,62 +38,48 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
   }
 
   const handleDownloadPDF = async () => {
+    if (!summaryRef.current) return
     setIsDownloading(true)
 
-    try {
-      // Create a temporary container for the full summary rendered with ReactMarkdown
-      const pdfContainer = document.createElement('div')
-      pdfContainer.style.cssText = `
-        position: absolute;
-        left: -9999px;
-        top: -9999px;
-        width: 800px;
-        background: white;
-        padding: 40px;
-        font-family: 'Inter', 'Helvetica', 'Arial', sans-serif;
-        line-height: 1.6;
-        color: #333333;
-        box-sizing: border-box;
-      `
+    // Store original state
+    const wasExpanded = expanded
 
-      // We'll render the full summary using ReactDOMServer? But we can't easily
-      // render React components outside of React. Instead, we'll use the existing
-      // ReactMarkdown component but inside a hidden div that we already have in the DOM.
-      // Let's instead create a hidden div in the component and reference it.
-      // Since we cannot render a new React component here, we'll use a hidden div
-      // that we'll always have in the DOM (see below). We'll capture that div.
-      
-      // Wait a moment for the hidden div to be fully rendered
-      await new Promise(resolve => setTimeout(resolve, 100))
-      
-      const hiddenPdfContent = document.getElementById('pdf-hidden-content')
-      if (!hiddenPdfContent) {
-        throw new Error('Hidden PDF content not found')
-      }
-      
-      // Clone the content to avoid affecting the original
-      const contentClone = hiddenPdfContent.cloneNode(true)
-      
-      // Update title and metadata in the clone (just in case)
-      const titleEl = contentClone.querySelector('.pdf-title')
-      if (titleEl) titleEl.textContent = note.title || 'Summary'
-      const metaEl = contentClone.querySelector('.pdf-meta')
-      if (metaEl) metaEl.innerHTML = `Created: ${formatDate(note.createdAt)} • ${note.pages || '?'} pages`
-      
-      pdfContainer.appendChild(contentClone)
-      document.body.appendChild(pdfContainer)
-      
+    // If card is collapsed, expand it to show full summary
+    if (!wasExpanded) {
+      setExpanded(true)
+      // Wait for React to re-render the expanded content
+      await new Promise(resolve => setTimeout(resolve, 200))
+    }
+
+    try {
+      // Create a temporary container with exact same styles as the card content
+      const element = summaryRef.current
+      const originalParent = element.parentNode
+
+      // Clone the element to avoid affecting the live DOM
+      const clone = element.cloneNode(true)
+      clone.style.width = `${element.offsetWidth}px`
+      clone.style.position = 'absolute'
+      clone.style.left = '-9999px'
+      clone.style.top = '-9999px'
+      clone.style.backgroundColor = 'white'
+      clone.style.padding = '20px'
+      document.body.appendChild(clone)
+
       // Wait for rendering
-      await new Promise(resolve => setTimeout(resolve, 500))
-      
+      await new Promise(resolve => setTimeout(resolve, 100))
+
       // Capture with html2canvas
-      const canvas = await html2canvas(pdfContainer, {
+      const canvas = await html2canvas(clone, {
         scale: 2,
         backgroundColor: '#ffffff',
         logging: false,
         useCORS: true
       })
-      
+
+      // Remove clone
+      document.body.removeChild(clone)
+
       // Create PDF
       const imgData = canvas.toDataURL('image/png')
       const pdf = new jsPDF({
@@ -101,31 +87,34 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
         format: 'a4',
         orientation: 'portrait'
       })
-      
+
       const imgWidth = 210
       const pageHeight = 297
       const imgHeight = (canvas.height * imgWidth) / canvas.width
       let heightLeft = imgHeight
       let position = 0
-      
+
       pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
       heightLeft -= pageHeight
-      
+
       while (heightLeft > 0) {
         position = heightLeft - imgHeight
         pdf.addPage()
         pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
         heightLeft -= pageHeight
       }
-      
-      pdf.save(`${note.title?.replace(/[^a-z0-9]/gi, '-').toLowerCase() || 'summary'}.pdf`)
-      
-      // Clean up
-      document.body.removeChild(pdfContainer)
+
+      const filename = `${note.title?.replace(/[^a-z0-9]/gi, '-').toLowerCase() || 'summary'}.pdf`
+      pdf.save(filename)
+
     } catch (error) {
       console.error('PDF download failed:', error)
       alert('Failed to download PDF. Please try again.')
     } finally {
+      // Restore original expanded state
+      if (!wasExpanded) {
+        setExpanded(false)
+      }
       setIsDownloading(false)
     }
   }
@@ -153,7 +142,10 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
       </div>
 
       <div className="note-content">
-        <div className="note-summary markdown-body">
+        <div 
+          ref={summaryRef}
+          className="note-summary markdown-body"
+        >
           {expanded ? (
             <ReactMarkdown components={MarkdownComponents}>
               {note.summary}
@@ -217,7 +209,14 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
             <>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="spinner">
                 <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" strokeDasharray="32" strokeDashoffset="32">
-                  <animate attributeName="stroke-dashoffset" dur="1s" values="32;0" repeatCount="indefinite" />
+                  <animateTransform
+                    attributeName="transform"
+                    type="rotate"
+                    from="0 12 12"
+                    to="360 12 12"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  />
                 </circle>
               </svg>
               Generating...
@@ -233,35 +232,6 @@ const NoteCard = ({ note, onPlayAudio, onDelete }) => {
             </>
           )}
         </button>
-      </div>
-
-      {/* Hidden div containing the full summary for PDF generation */}
-      <div
-        id="pdf-hidden-content"
-        style={{
-          position: 'absolute',
-          left: '-9999px',
-          top: '-9999px',
-          width: '800px',
-          background: 'white',
-          padding: '40px',
-          fontFamily: 'Inter, Helvetica, Arial, sans-serif',
-          lineHeight: '1.6',
-          color: '#333',
-          boxSizing: 'border-box'
-        }}
-      >
-        <h1 className="pdf-title" style={{ color: '#4A1D6D', fontSize: '32px', margin: '0 0 10px', fontWeight: '700' }}>
-          {note.title || 'Summary'}
-        </h1>
-        <div className="pdf-meta" style={{ color: '#666', fontSize: '14px', paddingBottom: '15px', borderBottom: '2px solid #4A1D6D', marginBottom: '20px' }}>
-          Created: {formatDate(note.createdAt)} • {note.pages || '?'} pages
-        </div>
-        <div className="markdown-body" style={{ fontSize: '14px', color: '#333' }}>
-          <ReactMarkdown components={MarkdownComponents}>
-            {note.summary}
-          </ReactMarkdown>
-        </div>
       </div>
     </div>
   )
